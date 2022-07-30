@@ -4,6 +4,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -52,6 +53,8 @@ public interface Ironbridge extends IInterface {
         public void sendDoubleList(String channel, String key, List<Double> value) {}
         @Override
         public void sendBooleanList(String channel, String key, List<Boolean> value) {}
+        @Override
+        public void sendParcelable(String channel, String key, Parcelable value) {}
 
         @Override
         public IBinder asBinder() { return null; }
@@ -77,6 +80,7 @@ public interface Ironbridge extends IInterface {
         static final int TRANSACTION_sendFloatList = IBinder.FIRST_CALL_TRANSACTION + 11;
         static final int TRANSACTION_sendDoubleList = IBinder.FIRST_CALL_TRANSACTION + 12;
         static final int TRANSACTION_sendBooleanList = IBinder.FIRST_CALL_TRANSACTION + 13;
+        static final int TRANSACTION_sendParcelable = IBinder.FIRST_CALL_TRANSACTION + 14;
         static final int TRANSACTION_API = IBinder.LAST_CALL_TRANSACTION;
 
         public Stub() {
@@ -221,6 +225,14 @@ public interface Ironbridge extends IInterface {
                         list.add(b);
                     }
                     sendBooleanList(channel, key, list);
+                    return true;
+                }
+                case TRANSACTION_sendParcelable: {
+                    data.enforceInterface(descriptor);
+                    String channel = data.readString();
+                    String key = data.readString();
+                    Parcelable value = data.readParcelable(getClass().getClassLoader());
+                    sendParcelable(channel, key, value);
                     return true;
                 }
                 case TRANSACTION_API: {
@@ -589,6 +601,27 @@ public interface Ironbridge extends IInterface {
                     _data.recycle();
                 }
             }
+
+            @Override
+            public void sendParcelable(String channel, String key, Parcelable value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(channel);
+                    _data.writeString(key);
+                    _data.writeParcelable(value, 0);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_sendParcelable, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().sendParcelable(channel, key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
         }
     }
 
@@ -633,5 +666,8 @@ public interface Ironbridge extends IInterface {
 
     @BridgeVersion(1)
     void sendBooleanList(String channel, String key, List<Boolean> value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void sendParcelable(String channel, String key, Parcelable value) throws RemoteException;
 
 }

@@ -4,6 +4,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.RemoteException;
 
 import androidx.annotation.Keep;
@@ -49,6 +50,8 @@ public interface BridgeListener extends IInterface {
         public void onReceivedDoubleList(String key, List<Double> value) {}
         @Override
         public void onReceivedBooleanList(String key, List<Boolean> value) {}
+        @Override
+        public void onReceivedParcelable(String key, Parcelable value) {}
 
         @Override
         public String getChannel() { return null; }
@@ -75,6 +78,7 @@ public interface BridgeListener extends IInterface {
         static final int TRANSACTION_onReceivedFloatList = IBinder.FIRST_CALL_TRANSACTION + 10;
         static final int TRANSACTION_onReceivedDoubleList = IBinder.FIRST_CALL_TRANSACTION + 11;
         static final int TRANSACTION_onReceivedBooleanList = IBinder.FIRST_CALL_TRANSACTION + 12;
+        static final int TRANSACTION_onReceivedParcelable = IBinder.FIRST_CALL_TRANSACTION + 13;
         public static final int TRANSACTION_API = IBinder.LAST_CALL_TRANSACTION;
 
         public Stub() {
@@ -197,6 +201,13 @@ public interface BridgeListener extends IInterface {
                     onReceivedBooleanList(key, list);
                     return true;
                 }
+                case TRANSACTION_onReceivedParcelable: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    Parcelable value = data.readParcelable(getClass().getClassLoader());
+                    onReceivedParcelable(key, value);
+                    return true;
+                }
                 case TRANSACTION_getChannel: {
                     data.enforceInterface(descriptor);
                     String _result = getChannel();
@@ -255,6 +266,8 @@ public interface BridgeListener extends IInterface {
         public void onReceivedDoubleList(String key, List<Double> value) {}
         @Override
         public void onReceivedBooleanList(String key, List<Boolean> value) {}
+        @Override
+        public void onReceivedParcelable(String key, Parcelable value) {}
 
         @Keep
         private static class Proxy implements BridgeListener {
@@ -476,6 +489,22 @@ public interface BridgeListener extends IInterface {
             }
 
             @Override
+            public void onReceivedParcelable(String key, Parcelable value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeParcelable(value, 0);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedParcelable, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedParcelable(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
             public String getChannel() throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
@@ -532,6 +561,9 @@ public interface BridgeListener extends IInterface {
 
     @BridgeVersion(1)
     void onReceivedBooleanList(String key, List<Boolean> value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedParcelable(String key, Parcelable value) throws RemoteException;
 
     @BridgeVersion(1)
     String getChannel() throws RemoteException;
