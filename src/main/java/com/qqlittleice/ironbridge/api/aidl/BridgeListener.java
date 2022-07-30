@@ -10,6 +10,11 @@ import androidx.annotation.Keep;
 
 import com.qqlittleice.ironbridge.api.annotation.BridgeVersion;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * A listener for {@link Ironbridge}.
  * <p>
@@ -33,6 +38,19 @@ public interface BridgeListener extends IInterface {
         @Override
         public void onReceivedBoolean(String key, boolean value) {}
         @Override
+        public void onReceivedStringList(String key, List<String> value) {}
+        @Override
+        public void onReceivedIntList(String key, List<Integer> value) {}
+        @Override
+        public void onReceivedLongList(String key, List<Long> value) {}
+        @Override
+        public void onReceivedFloatList(String key, List<Float> value) {}
+        @Override
+        public void onReceivedDoubleList(String key, List<Double> value) {}
+        @Override
+        public void onReceivedBooleanList(String key, List<Boolean> value) {}
+
+        @Override
         public String getChannel() { return null; }
         @Override
         public IBinder asBinder() { return null; }
@@ -51,6 +69,12 @@ public interface BridgeListener extends IInterface {
         static final int TRANSACTION_onReceivedFloat = IBinder.FIRST_CALL_TRANSACTION + 4;
         static final int TRANSACTION_onReceivedDouble = IBinder.FIRST_CALL_TRANSACTION + 5;
         static final int TRANSACTION_onReceivedBoolean = IBinder.FIRST_CALL_TRANSACTION + 6;
+        static final int TRANSACTION_onReceivedStringList = IBinder.FIRST_CALL_TRANSACTION + 7;
+        static final int TRANSACTION_onReceivedIntList = IBinder.FIRST_CALL_TRANSACTION + 8;
+        static final int TRANSACTION_onReceivedLongList = IBinder.FIRST_CALL_TRANSACTION + 9;
+        static final int TRANSACTION_onReceivedFloatList = IBinder.FIRST_CALL_TRANSACTION + 10;
+        static final int TRANSACTION_onReceivedDoubleList = IBinder.FIRST_CALL_TRANSACTION + 11;
+        static final int TRANSACTION_onReceivedBooleanList = IBinder.FIRST_CALL_TRANSACTION + 12;
         public static final int TRANSACTION_API = IBinder.LAST_CALL_TRANSACTION;
 
         public Stub() {
@@ -123,6 +147,56 @@ public interface BridgeListener extends IInterface {
                     onReceivedBoolean(key, value);
                     return true;
                 }
+                case TRANSACTION_onReceivedStringList: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    List<String> value = data.createStringArrayList();
+                    onReceivedStringList(key, value);
+                    return true;
+                }
+                case TRANSACTION_onReceivedIntList: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    List<Integer> value = Arrays.stream(data.createIntArray()).boxed().collect(Collectors.toList());
+                    onReceivedIntList(key, value);
+                    return true;
+                }
+                case TRANSACTION_onReceivedLongList: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    List<Long> value = Arrays.stream(data.createLongArray()).boxed().collect(Collectors.toList());
+                    onReceivedLongList(key, value);
+                    return true;
+                }
+                case TRANSACTION_onReceivedFloatList: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    float[] array = data.createFloatArray();
+                    List<Float> list = new ArrayList<>(array.length);
+                    for (float f : array) {
+                        list.add(f);
+                    }
+                    onReceivedFloatList(key, list);
+                    return true;
+                }
+                case TRANSACTION_onReceivedDoubleList: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    List<Double> value = Arrays.stream(data.createDoubleArray()).boxed().collect(Collectors.toList());
+                    onReceivedDoubleList(key, value);
+                    return true;
+                }
+                case TRANSACTION_onReceivedBooleanList: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    boolean[] array = data.createBooleanArray();
+                    List<Boolean> list = new ArrayList<>(array.length);
+                    for (boolean b : array) {
+                        list.add(b);
+                    }
+                    onReceivedBooleanList(key, list);
+                    return true;
+                }
                 case TRANSACTION_getChannel: {
                     data.enforceInterface(descriptor);
                     String _result = getChannel();
@@ -156,6 +230,31 @@ public interface BridgeListener extends IInterface {
         public static BridgeListener getDefaultImpl() {
             return Proxy.sDefaultImpl;
         }
+
+        @Override
+        public void onReceivedString(String key, String value) {}
+        @Override
+        public void onReceivedInt(String key, int value) {}
+        @Override
+        public void onReceivedLong(String key, long value) {}
+        @Override
+        public void onReceivedFloat(String key, float value) {}
+        @Override
+        public void onReceivedDouble(String key, double value) {}
+        @Override
+        public void onReceivedBoolean(String key, boolean value) {}
+        @Override
+        public void onReceivedStringList(String key, List<String> value) {}
+        @Override
+        public void onReceivedIntList(String key, List<Integer> value) {}
+        @Override
+        public void onReceivedLongList(String key, List<Long> value) {}
+        @Override
+        public void onReceivedFloatList(String key, List<Float> value) {}
+        @Override
+        public void onReceivedDoubleList(String key, List<Double> value) {}
+        @Override
+        public void onReceivedBooleanList(String key, List<Boolean> value) {}
 
         @Keep
         private static class Proxy implements BridgeListener {
@@ -273,6 +372,110 @@ public interface BridgeListener extends IInterface {
             }
 
             @Override
+            public void onReceivedStringList(String key, List<String> value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeStringList(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedStringList, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedStringList(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void onReceivedIntList(String key, List<Integer> value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeIntArray(value.stream().mapToInt(Integer::intValue).toArray());
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedIntList, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedIntList(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void onReceivedLongList(String key, List<Long> value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeLongArray(value.stream().mapToLong(Long::longValue).toArray());
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedLongList, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedLongList(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void onReceivedFloatList(String key, List<Float> value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    float[] array = new float[value.size()];
+                    for (int i = 0; i < value.size(); i++) {
+                        array[i] = value.get(i);
+                    }
+                    _data.writeFloatArray(array);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedFloatList, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedFloatList(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void onReceivedDoubleList(String key, List<Double> value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeDoubleArray(value.stream().mapToDouble(Double::doubleValue).toArray());
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedDoubleList, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedDoubleList(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void onReceivedBooleanList(String key, List<Boolean> value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    boolean[] array = new boolean[value.size()];
+                    for (int i = 0; i < value.size(); i++) {
+                        array[i] = value.get(i);
+                    }
+                    _data.writeBooleanArray(array);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedBooleanList, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedBooleanList(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
             public String getChannel() throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
@@ -311,6 +514,24 @@ public interface BridgeListener extends IInterface {
 
     @BridgeVersion(1)
     void onReceivedBoolean(String key, boolean value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedStringList(String key, List<String> value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedIntList(String key, List<Integer> value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedLongList(String key, List<Long> value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedFloatList(String key, List<Float> value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedDoubleList(String key, List<Double> value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedBooleanList(String key, List<Boolean> value) throws RemoteException;
 
     @BridgeVersion(1)
     String getChannel() throws RemoteException;
