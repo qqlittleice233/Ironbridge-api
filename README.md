@@ -9,7 +9,7 @@ Ironbridge Api is used to interact with the Ironbridge Xposed module.
 
 ## Quick Start
 
-### 1. Install Ironbridge Xposed module
+### 1. Install [Ironbridge Xposed module](https://github.com/Xposed-Modules-Repo/com.qqlittleice.ironbridge/releases)
 
 ### 2. Connect to the public bridge
 
