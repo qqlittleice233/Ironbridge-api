@@ -41,7 +41,8 @@ public interface BridgeListener extends IInterface {
     @Keep
     abstract class Stub extends Binder implements BridgeListener {
 
-        private static final String DESCRIPTOR = "com.qqlittleice.ironbridge.aidl.BridgeListener";
+        public static final String DESCRIPTOR = "com.qqlittleice.ironbridge.aidl.BridgeListener";
+        public static final int api = 1;
 
         static final int TRANSACTION_getChannel = IBinder.FIRST_CALL_TRANSACTION;
         static final int TRANSACTION_onReceivedString = IBinder.FIRST_CALL_TRANSACTION + 1;
@@ -50,6 +51,7 @@ public interface BridgeListener extends IInterface {
         static final int TRANSACTION_onReceivedFloat = IBinder.FIRST_CALL_TRANSACTION + 4;
         static final int TRANSACTION_onReceivedDouble = IBinder.FIRST_CALL_TRANSACTION + 5;
         static final int TRANSACTION_onReceivedBoolean = IBinder.FIRST_CALL_TRANSACTION + 6;
+        public static final int TRANSACTION_API = IBinder.LAST_CALL_TRANSACTION;
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);
@@ -126,6 +128,12 @@ public interface BridgeListener extends IInterface {
                     String _result = getChannel();
                     reply.writeNoException();
                     reply.writeString(_result);
+                    return true;
+                }
+                case TRANSACTION_API: {
+                    data.enforceInterface(descriptor);
+                    reply.writeNoException();
+                    reply.writeInt(api);
                     return true;
                 }
                 default: {

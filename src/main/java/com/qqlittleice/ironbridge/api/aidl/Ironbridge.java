@@ -5,6 +5,7 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.util.Log;
 
 import androidx.annotation.Keep;
 
@@ -42,6 +43,7 @@ public interface Ironbridge extends IInterface {
     abstract class Stub extends Binder implements Ironbridge {
 
         public static final String DESCRIPTOR = "com.qqlittleice.ironbridge.aidl.Ironbridge";
+        public static final int api = 1;
 
         static final int TRANSACTION_addListener = IBinder.FIRST_CALL_TRANSACTION;
         static final int TRANSACTION_removeListener = IBinder.FIRST_CALL_TRANSACTION + 1;
@@ -51,6 +53,7 @@ public interface Ironbridge extends IInterface {
         static final int TRANSACTION_sendFloat = IBinder.FIRST_CALL_TRANSACTION + 5;
         static final int TRANSACTION_sendDouble = IBinder.FIRST_CALL_TRANSACTION + 6;
         static final int TRANSACTION_sendBoolean = IBinder.FIRST_CALL_TRANSACTION + 7;
+        static final int TRANSACTION_API = IBinder.LAST_CALL_TRANSACTION;
 
         public Stub() {
             attachInterface(this, DESCRIPTOR);
@@ -140,6 +143,12 @@ public interface Ironbridge extends IInterface {
                     sendBoolean(channel, key, value);
                     return true;
                 }
+                case TRANSACTION_API: {
+                    data.enforceInterface(descriptor);
+                    reply.writeNoException();
+                    reply.writeInt(api);
+                    return true;
+                }
                 default: {
                     return super.onTransact(code, data, reply, flags);
                 }
@@ -180,8 +189,35 @@ public interface Ironbridge extends IInterface {
                 return DESCRIPTOR;
             }
 
+            public int getRemoteApiVersion() throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                Parcel _reply = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    boolean _status = mRemote.transact(TRANSACTION_API, _data, _reply, 0);
+                    if (!_status) {
+                        Log.d("IronBridge", "get remote api version failed");
+                        return 0;
+                    }
+                    _reply.readException();
+                    return _reply.readInt();
+                } finally {
+                    _reply.recycle();
+                    _data.recycle();
+                }
+            }
+
+            public boolean checkApiVersion(int requireApi) throws RemoteException {
+                int remoteApi = getRemoteApiVersion();
+                return remoteApi >= requireApi;
+            }
+
             @Override
             public void addListener(BridgeListener listener) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
@@ -197,6 +233,10 @@ public interface Ironbridge extends IInterface {
 
             @Override
             public void removeListener(BridgeListener listener) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
@@ -212,6 +252,10 @@ public interface Ironbridge extends IInterface {
 
             @Override
             public void sendString(String channel, String key, String value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
@@ -229,6 +273,10 @@ public interface Ironbridge extends IInterface {
 
             @Override
             public void sendInt(String channel, String key, int value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
@@ -246,6 +294,10 @@ public interface Ironbridge extends IInterface {
 
             @Override
             public void sendLong(String channel, String key, long value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
@@ -263,6 +315,10 @@ public interface Ironbridge extends IInterface {
 
             @Override
             public void sendFloat(String channel, String key, float value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
@@ -280,6 +336,10 @@ public interface Ironbridge extends IInterface {
 
             @Override
             public void sendDouble(String channel, String key, double value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
@@ -297,6 +357,10 @@ public interface Ironbridge extends IInterface {
 
             @Override
             public void sendBoolean(String channel, String key, boolean value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
                 Parcel _data = Parcel.obtain();
                 try {
                     _data.writeInterfaceToken(DESCRIPTOR);
