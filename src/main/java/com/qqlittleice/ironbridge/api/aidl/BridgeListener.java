@@ -55,6 +55,8 @@ public interface BridgeListener extends IInterface {
         public void onReceivedParcelable(String key, Parcelable value) {}
         @Override
         public void onReceivedSerializable(String key, Serializable value) {}
+        @Override
+        public void onReceivedIBinder(String key, IBinder value) {}
 
         @Override
         public String getChannel() { return null; }
@@ -83,6 +85,7 @@ public interface BridgeListener extends IInterface {
         static final int TRANSACTION_onReceivedBooleanList = IBinder.FIRST_CALL_TRANSACTION + 12;
         static final int TRANSACTION_onReceivedParcelable = IBinder.FIRST_CALL_TRANSACTION + 13;
         static final int TRANSACTION_onReceivedSerializable = IBinder.FIRST_CALL_TRANSACTION + 14;
+        static final int TRANSACTION_onReceivedIBinder = IBinder.FIRST_CALL_TRANSACTION + 15;
         public static final int TRANSACTION_API = IBinder.LAST_CALL_TRANSACTION;
 
         public Stub() {
@@ -219,6 +222,13 @@ public interface BridgeListener extends IInterface {
                     onReceivedSerializable(key, value);
                     return true;
                 }
+                case TRANSACTION_onReceivedIBinder: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    IBinder value = data.readStrongBinder();
+                    onReceivedIBinder(key, value);
+                    return true;
+                }
                 case TRANSACTION_getChannel: {
                     data.enforceInterface(descriptor);
                     String _result = getChannel();
@@ -281,6 +291,8 @@ public interface BridgeListener extends IInterface {
         public void onReceivedParcelable(String key, Parcelable value) {}
         @Override
         public void onReceivedSerializable(String key, Serializable value) {}
+        @Override
+        public void onReceivedIBinder(String key, IBinder value) {}
 
         @Keep
         private static class Proxy implements BridgeListener {
@@ -534,6 +546,22 @@ public interface BridgeListener extends IInterface {
             }
 
             @Override
+            public void onReceivedIBinder(String key, IBinder value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeStrongBinder(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedIBinder, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedIBinder(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
             public String getChannel() throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 Parcel _reply = Parcel.obtain();
@@ -596,6 +624,9 @@ public interface BridgeListener extends IInterface {
 
     @BridgeVersion(1)
     void onReceivedSerializable(String key, Serializable value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedIBinder(String key, IBinder value) throws RemoteException;
 
     @BridgeVersion(1)
     String getChannel() throws RemoteException;

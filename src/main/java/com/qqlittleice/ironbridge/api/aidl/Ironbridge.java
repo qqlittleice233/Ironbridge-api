@@ -58,6 +58,8 @@ public interface Ironbridge extends IInterface {
         public void sendParcelable(String channel, String key, Parcelable value) {}
         @Override
         public void sendSerializable(String channel, String key, Serializable value) {}
+        @Override
+        public void sendIBinder(String channel, String key, IBinder value) throws RemoteException {}
 
         @Override
         public IBinder asBinder() { return null; }
@@ -85,6 +87,7 @@ public interface Ironbridge extends IInterface {
         static final int TRANSACTION_sendBooleanList = IBinder.FIRST_CALL_TRANSACTION + 13;
         static final int TRANSACTION_sendParcelable = IBinder.FIRST_CALL_TRANSACTION + 14;
         static final int TRANSACTION_sendSerializable = IBinder.FIRST_CALL_TRANSACTION + 15;
+        static final int TRANSACTION_sendIBinder = IBinder.FIRST_CALL_TRANSACTION + 16;
         static final int TRANSACTION_API = IBinder.LAST_CALL_TRANSACTION;
 
         public Stub() {
@@ -245,6 +248,14 @@ public interface Ironbridge extends IInterface {
                     String key = data.readString();
                     Serializable value = data.readSerializable();
                     sendSerializable(channel, key, value);
+                    return true;
+                }
+                case TRANSACTION_sendIBinder: {
+                    data.enforceInterface(descriptor);
+                    String channel = data.readString();
+                    String key = data.readString();
+                    IBinder value = data.readStrongBinder();
+                    sendIBinder(channel, key, value);
                     return true;
                 }
                 case TRANSACTION_API: {
@@ -655,6 +666,27 @@ public interface Ironbridge extends IInterface {
                     _data.recycle();
                 }
             }
+
+            @Override
+            public void sendIBinder(String channel, String key, IBinder value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(channel);
+                    _data.writeString(key);
+                    _data.writeStrongBinder(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_sendIBinder, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().sendIBinder(channel, key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
         }
     }
 
@@ -705,5 +737,8 @@ public interface Ironbridge extends IInterface {
 
     @BridgeVersion(1)
     void sendSerializable(String channel, String key, Serializable value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void sendIBinder(String channel, String key, IBinder value) throws RemoteException;
 
 }
