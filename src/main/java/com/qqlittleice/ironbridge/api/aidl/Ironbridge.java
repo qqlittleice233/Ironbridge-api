@@ -55,11 +55,23 @@ public interface Ironbridge extends IInterface {
         @Override
         public void sendBooleanList(String channel, String key, List<Boolean> value) {}
         @Override
+        public void sendStringArray(String channel, String key, String[] value) {}
+        @Override
+        public void sendIntArray(String channel, String key, int[] value) {}
+        @Override
+        public void sendLongArray(String channel, String key, long[] value) {}
+        @Override
+        public void sendFloatArray(String channel, String key, float[] value) {}
+        @Override
+        public void sendDoubleArray(String channel, String key, double[] value) {}
+        @Override
+        public void sendBooleanArray(String channel, String key, boolean[] value) {}
+        @Override
         public void sendParcelable(String channel, String key, Parcelable value) {}
         @Override
         public void sendSerializable(String channel, String key, Serializable value) {}
         @Override
-        public void sendIBinder(String channel, String key, IBinder value) throws RemoteException {}
+        public void sendIBinder(String channel, String key, IBinder value) {}
 
         @Override
         public IBinder asBinder() { return null; }
@@ -85,9 +97,15 @@ public interface Ironbridge extends IInterface {
         static final int TRANSACTION_sendFloatList = IBinder.FIRST_CALL_TRANSACTION + 11;
         static final int TRANSACTION_sendDoubleList = IBinder.FIRST_CALL_TRANSACTION + 12;
         static final int TRANSACTION_sendBooleanList = IBinder.FIRST_CALL_TRANSACTION + 13;
-        static final int TRANSACTION_sendParcelable = IBinder.FIRST_CALL_TRANSACTION + 14;
-        static final int TRANSACTION_sendSerializable = IBinder.FIRST_CALL_TRANSACTION + 15;
-        static final int TRANSACTION_sendIBinder = IBinder.FIRST_CALL_TRANSACTION + 16;
+        static final int TRANSACTION_sendStringArray = IBinder.FIRST_CALL_TRANSACTION + 14;
+        static final int TRANSACTION_sendIntArray = IBinder.FIRST_CALL_TRANSACTION + 15;
+        static final int TRANSACTION_sendLongArray = IBinder.FIRST_CALL_TRANSACTION + 16;
+        static final int TRANSACTION_sendFloatArray = IBinder.FIRST_CALL_TRANSACTION + 17;
+        static final int TRANSACTION_sendDoubleArray = IBinder.FIRST_CALL_TRANSACTION + 18;
+        static final int TRANSACTION_sendBooleanArray = IBinder.FIRST_CALL_TRANSACTION + 19;
+        static final int TRANSACTION_sendParcelable = IBinder.FIRST_CALL_TRANSACTION + 20;
+        static final int TRANSACTION_sendSerializable = IBinder.FIRST_CALL_TRANSACTION + 21;
+        static final int TRANSACTION_sendIBinder = IBinder.FIRST_CALL_TRANSACTION + 22;
         static final int TRANSACTION_API = IBinder.LAST_CALL_TRANSACTION;
 
         public Stub() {
@@ -232,6 +250,54 @@ public interface Ironbridge extends IInterface {
                         list.add(b);
                     }
                     sendBooleanList(channel, key, list);
+                    return true;
+                }
+                case TRANSACTION_sendStringArray: {
+                    data.enforceInterface(descriptor);
+                    String channel = data.readString();
+                    String key = data.readString();
+                    String[] value = data.createStringArray();
+                    sendStringArray(channel, key, value);
+                    return true;
+                }
+                case TRANSACTION_sendIntArray: {
+                    data.enforceInterface(descriptor);
+                    String channel = data.readString();
+                    String key = data.readString();
+                    int[] value = data.createIntArray();
+                    sendIntArray(channel, key, value);
+                    return true;
+                }
+                case TRANSACTION_sendLongArray: {
+                    data.enforceInterface(descriptor);
+                    String channel = data.readString();
+                    String key = data.readString();
+                    long[] value = data.createLongArray();
+                    sendLongArray(channel, key, value);
+                    return true;
+                }
+                case TRANSACTION_sendFloatArray: {
+                    data.enforceInterface(descriptor);
+                    String channel = data.readString();
+                    String key = data.readString();
+                    float[] value = data.createFloatArray();
+                    sendFloatArray(channel, key, value);
+                    return true;
+                }
+                case TRANSACTION_sendDoubleArray: {
+                    data.enforceInterface(descriptor);
+                    String channel = data.readString();
+                    String key = data.readString();
+                    double[] value = data.createDoubleArray();
+                    sendDoubleArray(channel, key, value);
+                    return true;
+                }
+                case TRANSACTION_sendBooleanArray: {
+                    data.enforceInterface(descriptor);
+                    String channel = data.readString();
+                    String key = data.readString();
+                    boolean[] value = data.createBooleanArray();
+                    sendBooleanArray(channel, key, value);
                     return true;
                 }
                 case TRANSACTION_sendParcelable: {
@@ -626,6 +692,132 @@ public interface Ironbridge extends IInterface {
             }
 
             @Override
+            public void sendStringArray(String channel, String key, String[] value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(channel);
+                    _data.writeString(key);
+                    _data.writeStringArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_sendStringArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().sendStringArray(channel, key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void sendIntArray(String channel, String key, int[] value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(channel);
+                    _data.writeString(key);
+                    _data.writeIntArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_sendIntArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().sendIntArray(channel, key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void sendLongArray(String channel, String key, long[] value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(channel);
+                    _data.writeString(key);
+                    _data.writeLongArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_sendLongArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().sendLongArray(channel, key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void sendFloatArray(String channel, String key, float[] value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(channel);
+                    _data.writeString(key);
+                    _data.writeFloatArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_sendFloatArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().sendFloatArray(channel, key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void sendDoubleArray(String channel, String key, double[] value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(channel);
+                    _data.writeString(key);
+                    _data.writeDoubleArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_sendDoubleArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().sendDoubleArray(channel, key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void sendBooleanArray(String channel, String key, boolean[] value) throws RemoteException {
+                if (!checkApiVersion(1)) {
+                    Log.d("IronBridge", "remote api version is too low, require 1");
+                    return;
+                }
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(channel);
+                    _data.writeString(key);
+                    _data.writeBooleanArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_sendBooleanArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().sendBooleanArray(channel, key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
             public void sendParcelable(String channel, String key, Parcelable value) throws RemoteException {
                 if (!checkApiVersion(1)) {
                     Log.d("IronBridge", "remote api version is too low, require 1");
@@ -731,6 +923,24 @@ public interface Ironbridge extends IInterface {
 
     @BridgeVersion(1)
     void sendBooleanList(String channel, String key, List<Boolean> value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void sendStringArray(String channel, String key, String[] value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void sendIntArray(String channel, String key, int[] value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void sendLongArray(String channel, String key, long[] value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void sendFloatArray(String channel, String key, float[] value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void sendDoubleArray(String channel, String key, double[] value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void sendBooleanArray(String channel, String key, boolean[] value) throws RemoteException;
 
     @BridgeVersion(1)
     void sendParcelable(String channel, String key, Parcelable value) throws RemoteException;

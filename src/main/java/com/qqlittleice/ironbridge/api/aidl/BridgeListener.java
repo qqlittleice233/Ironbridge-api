@@ -52,6 +52,18 @@ public interface BridgeListener extends IInterface {
         @Override
         public void onReceivedBooleanList(String key, List<Boolean> value) {}
         @Override
+        public void onReceivedStringArray(String key, String[] value) {}
+        @Override
+        public void onReceivedIntArray(String key, int[] value) {}
+        @Override
+        public void onReceivedLongArray(String key, long[] value) {}
+        @Override
+        public void onReceivedFloatArray(String key, float[] value) {}
+        @Override
+        public void onReceivedDoubleArray(String key, double[] value) {}
+        @Override
+        public void onReceivedBooleanArray(String key, boolean[] value) {}
+        @Override
         public void onReceivedParcelable(String key, Parcelable value) {}
         @Override
         public void onReceivedSerializable(String key, Serializable value) {}
@@ -83,9 +95,15 @@ public interface BridgeListener extends IInterface {
         static final int TRANSACTION_onReceivedFloatList = IBinder.FIRST_CALL_TRANSACTION + 10;
         static final int TRANSACTION_onReceivedDoubleList = IBinder.FIRST_CALL_TRANSACTION + 11;
         static final int TRANSACTION_onReceivedBooleanList = IBinder.FIRST_CALL_TRANSACTION + 12;
-        static final int TRANSACTION_onReceivedParcelable = IBinder.FIRST_CALL_TRANSACTION + 13;
-        static final int TRANSACTION_onReceivedSerializable = IBinder.FIRST_CALL_TRANSACTION + 14;
-        static final int TRANSACTION_onReceivedIBinder = IBinder.FIRST_CALL_TRANSACTION + 15;
+        static final int TRANSACTION_onReceivedStringArray = IBinder.FIRST_CALL_TRANSACTION + 13;
+        static final int TRANSACTION_onReceivedIntArray = IBinder.FIRST_CALL_TRANSACTION + 14;
+        static final int TRANSACTION_onReceivedLongArray = IBinder.FIRST_CALL_TRANSACTION + 15;
+        static final int TRANSACTION_onReceivedFloatArray = IBinder.FIRST_CALL_TRANSACTION + 16;
+        static final int TRANSACTION_onReceivedDoubleArray = IBinder.FIRST_CALL_TRANSACTION + 17;
+        static final int TRANSACTION_onReceivedBooleanArray = IBinder.FIRST_CALL_TRANSACTION + 18;
+        static final int TRANSACTION_onReceivedParcelable = IBinder.FIRST_CALL_TRANSACTION + 19;
+        static final int TRANSACTION_onReceivedSerializable = IBinder.FIRST_CALL_TRANSACTION + 20;
+        static final int TRANSACTION_onReceivedIBinder = IBinder.FIRST_CALL_TRANSACTION + 21;
         public static final int TRANSACTION_API = IBinder.LAST_CALL_TRANSACTION;
 
         public Stub() {
@@ -208,6 +226,48 @@ public interface BridgeListener extends IInterface {
                     onReceivedBooleanList(key, list);
                     return true;
                 }
+                case TRANSACTION_onReceivedStringArray: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    String[] value = data.createStringArray();
+                    onReceivedStringArray(key, value);
+                    return true;
+                }
+                case TRANSACTION_onReceivedIntArray: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    int[] value = data.createIntArray();
+                    onReceivedIntArray(key, value);
+                    return true;
+                }
+                case TRANSACTION_onReceivedLongArray: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    long[] value = data.createLongArray();
+                    onReceivedLongArray(key, value);
+                    return true;
+                }
+                case TRANSACTION_onReceivedFloatArray: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    float[] value = data.createFloatArray();
+                    onReceivedFloatArray(key, value);
+                    return true;
+                }
+                case TRANSACTION_onReceivedDoubleArray: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    double[] value = data.createDoubleArray();
+                    onReceivedDoubleArray(key, value);
+                    return true;
+                }
+                case TRANSACTION_onReceivedBooleanArray: {
+                    data.enforceInterface(descriptor);
+                    String key = data.readString();
+                    boolean[] value = data.createBooleanArray();
+                    onReceivedBooleanArray(key, value);
+                    return true;
+                }
                 case TRANSACTION_onReceivedParcelable: {
                     data.enforceInterface(descriptor);
                     String key = data.readString();
@@ -287,6 +347,18 @@ public interface BridgeListener extends IInterface {
         public void onReceivedDoubleList(String key, List<Double> value) {}
         @Override
         public void onReceivedBooleanList(String key, List<Boolean> value) {}
+        @Override
+        public void onReceivedStringArray(String key, String[] value) {}
+        @Override
+        public void onReceivedIntArray(String key, int[] value) {}
+        @Override
+        public void onReceivedLongArray(String key, long[] value) {}
+        @Override
+        public void onReceivedFloatArray(String key, float[] value) {}
+        @Override
+        public void onReceivedDoubleArray(String key, double[] value) {}
+        @Override
+        public void onReceivedBooleanArray(String key, boolean[] value) {}
         @Override
         public void onReceivedParcelable(String key, Parcelable value) {}
         @Override
@@ -514,6 +586,102 @@ public interface BridgeListener extends IInterface {
             }
 
             @Override
+            public void onReceivedStringArray(String key, String[] value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeStringArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedStringArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedStringArray(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void onReceivedIntArray(String key, int[] value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeIntArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedIntArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedIntArray(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void onReceivedLongArray(String key, long[] value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeLongArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedLongArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedLongArray(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void onReceivedFloatArray(String key, float[] value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeFloatArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedFloatArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedFloatArray(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void onReceivedDoubleArray(String key, double[] value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeDoubleArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedDoubleArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedDoubleArray(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
+            public void onReceivedBooleanArray(String key, boolean[] value) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken(DESCRIPTOR);
+                    _data.writeString(key);
+                    _data.writeBooleanArray(value);
+                    boolean _status = mRemote.transact(Stub.TRANSACTION_onReceivedBooleanArray, _data, null, IBinder.FLAG_ONEWAY);
+                    if (!_status && getDefaultImpl() != null) {
+                        getDefaultImpl().onReceivedBooleanArray(key, value);
+                    }
+                } finally {
+                    _data.recycle();
+                }
+            }
+
+            @Override
             public void onReceivedParcelable(String key, Parcelable value) throws RemoteException {
                 Parcel _data = Parcel.obtain();
                 try {
@@ -618,6 +786,24 @@ public interface BridgeListener extends IInterface {
 
     @BridgeVersion(1)
     void onReceivedBooleanList(String key, List<Boolean> value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedStringArray(String key, String[] value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedIntArray(String key, int[] value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedLongArray(String key, long[] value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedFloatArray(String key, float[] value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedDoubleArray(String key, double[] value) throws RemoteException;
+
+    @BridgeVersion(1)
+    void onReceivedBooleanArray(String key, boolean[] value) throws RemoteException;
 
     @BridgeVersion(1)
     void onReceivedParcelable(String key, Parcelable value) throws RemoteException;
